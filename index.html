@@ -238,27 +238,13 @@
         centerImage.src = "https://files.catbox.moe/rpqh1b.jpg";
 
         // Array contenente i nomi dei problemi di SF
-        const SFProblems = [
-            "Flag errata", "Json.exception", "SOQL limit exceeded", "DML exception",
-            "Apex CPU limit exceeded", "Heap limit exceeded", "Script-thrown exception",
-            "Missing required field", "Invalid field value", "Timeout error",
-            "Workflow failure", "Process Builder failure", "Trigger exception",
-            "Email service failure", "API request limit exceeded", "Visualforce error",
-            "Lightning component error", "Integration failure", "Deployment error",
-            "Permission issue", "Sharing rule issue", "Validation rule failure",
-            "Duplicate record", "Data skew", "Governor limit",
-            "Test class failure", "Package installation failure", "Metadata API error",
-            "Chatter error", "Community error", "Mobile SDK error",
-            "Einstein Analytics error", "SF Connect error", "External object error",
-            "Platform event error", "Change Data Capture error", "Custom setting error",
-            "Custom metadata error", "Translation error", "Localization issue",
-            "Record locking issue", "Queueable job failure", "Scheduled job failure",
-            "Batch job failure", "Future method failure", "Callout exception",
-            "Site error", "Service Cloud error", "Marketing Cloud error",
-            "Commerce Cloud error", "Financial Services Cloud error", "Health Cloud error",
-            "Government Cloud error", "Nonprofit Cloud error", "Education Cloud error",
-            "Experience Cloud Error"
-        ];
+        SF const SFProblems = [ "INVALID_FIELD", "DUPLICATE_VALUE", "REQUIRED_FIELD_MISSING", "FIELD_INTEGRITY_EXCEPTION", "MALFORMED_ID", "QUERY_TIMEOUT",
+                               "SOQL_ENGINE_RUNTIME_EXCEPTION", "DMLException", "LIMIT_EXCEEDED", "CPU_TIME_LIMIT_EXCEEDED", "HEAP_SIZE_LIMIT_EXCEEDED", 
+                               "NUMBER_OF_QUERIES_EXCEEDED", "NUMBER_OF_RECORDS_MODIFIED_EXCEEDED", "TRANSACTION_TOO_LARGE", "UNABLE_TO_LOCK_ROW", "INVALID_TYPE",
+                               "TYPE_MISMATCH", "JSON_PARSER_ERROR", "XML_PARSER_ERROR", "APEX_ERROR", "VISUALFORCE_ERROR", "LIGHTNING_ERROR", "INSUFFICIENT_ACCESS_OR_READONLY", "OPERATION_LOCKED", 
+                               "INVALID_SESSION_ID", "AUTHENTICATION_FAILURE", "MISSING_ARGUMENT", "INVALID_ARGUMENT", "UNSUPPORTED_OPERATION", "EXTERNAL_ID_NOT_FOUND", "INVALID_EMAIL_ADDRESS",
+                               "INVALID_PHONE_NUMBER", "INVALID_URL", "INVALID_DATE_FORMAT", "INVALID_CURRENCY_ISO", "PLATFORM_EVENT_PUBLISH_FAILED", "CHANGE_DATA_CAPTURE_ERROR", "CUSTOM_SETTING_LIMIT_EXCEEDED",
+                               "CUSTOM_METADATA_LIMIT_EXCEEDED", "SSO_SERVICE_DOWN", "MALFORMED_QUERY", "INVALID_ID_FIELD", "NON_SELECTIVE_QUERY" ];
 
         // Inizializza il numero di fette della ruota
         let slices = parseInt(slicesInput.value);
