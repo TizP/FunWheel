@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La ruota di SF</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Stile per il corpo della pagina */
+        body {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+        }
+        /* Stile per il titolo principale */
+        h1 {
+            margin: 20px 0;
+            color: #4CAF50;
+            font-size: 2.5em;
+        }
+        /* Stile per il contenitore principale */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        /* Stile per il contenitore degli elementi principali (ruota e controlli) */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            max-width: 1200px;
+            width: 100%;
+        }
+        /* Stile per il contenitore della ruota */
+        .wheel-container {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            background-color: #ffffff;
+            padding: 15px;
+            width: 90vw;
+            height: 90vw;
+            max-width: 600px;
+            max-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-right: 0;
+            margin-left: 0;
+        }
+        /* Stile per l'elemento canvas della ruota */
+        #wheel {
+            border: 3px solid #666;
+            border-radius: 50%;
+            background-color: #fff;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 100%;
+        }
+        /* Stile per il cerchio centrale della ruota */
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15%;
+            height: 15%;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 2px solid #666;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        /* Stile per l'immagine all'interno del cerchio centrale */
+        .wheel-center img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        /* Stile per il contenitore dei controlli */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 20px;
+            width: 100%;
+            padding-left: 20px;
+            box-sizing: border-box;
+        }
+        /* Stile per le etichette dei controlli */
+        .controls label {
+            margin-bottom: 12px;
+            color: #555;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        /* Stile per gli input di tipo numero */
+        .controls input[type="number"] {
+            padding: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+            font-size: 18px;
+            transition: border-color 0.3s ease;
+        }
+        /* Stile per gli input di tipo numero quando sono in focus (selezionati) */
+        .controls input[type="number"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        /* Stile per i bottoni */
+        .controls button {
+            padding: 16px 30px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 3px 7px rgba(0,0,0,0.25);
+            width: 90%;
+            max-width: 400px;
+        }
+        /* Stile per i bottoni quando sonoHover */
+        .controls button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        /* Stile per i bottoni quando sono attivi (cliccati) */
+        .controls button:active {
+            background-color: #388E3C;
+            transform: scale(0.95);
+        }
+        /* Stile specifico per il bottone "Rigenera nomi" */
+        #regenerate {
+            background-color: #008CBA;
+        }
+        #regenerate:hover {
+            background-color: #007ba7;
+        }
+        #regenerate:active {
+            background-color: #006682;
+        }
+        /* Stile per la linea radiale */
+        .radius-line {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 50%;
+            height: 2px;
+            background-color: #ff0000;
+            transform: translateY(-50%);
+            transform-origin: 0 50%;
+            z-index: 5;
+        }
+
+        /* Media query per schermi piccoli (es. telefoni) */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .wheel-container {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            .controls {
+                padding-left: 0;
+                align-items: center;
+            }
+            .controls button{
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>La ruota di SF</h1>
+    <div class="main-container">
+        <div class="container">
+            <div class="wheel-container">
+                <canvas id="wheel" width="600" height="600"></canvas>
+                <div class="wheel-center">
+                    <img src="https://files.catbox.moe/rpqh1b.jpg" alt="Immagine personalizzata">
+                </div>
+                <div class="radius-line"></div>
+            </div>
+            <div class="controls">
+                <label for="slices">Numero di fette:</label>
+                <input type="number" id="slices" value="8" min="2">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                    <button id="spin">Gira la ruota!</button>
+                    <button id="spin-fast">Gira la ruota VELOCISSIMO!</button>
+                </div>
+                <button id="regenerate">Rigenera nomi</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Ottiene il riferimento all'elemento canvas dal documento HTML
+        const canvas = document.getElementById('wheel');
+        // Ottiene il contesto 2D del canvas, necessario per disegnare sulla ruota
+        const ctx = canvas.getContext('2d');
+        // Ottiene il riferimento all'input per il numero di fette
+        const slicesInput = document.getElementById('slices');
+        // Ottiene il riferimento al bottone per far girare la ruota
+        const spinButton = document.getElementById('spin');
+        const spinFastButton = document.getElementById('spin-fast'); // Nuovo bottone per la rotazione veloce
+        // Ottiene il riferimento al bottone per rigenerare i nomi
+        const regenerateButton = document.getElementById('regenerate');
+        // Ottiene il riferimento al contenitore del cerchio centrale
+        const wheelCenter = document.querySelector('.wheel-center');
+        // Ottiene il riferimento all'immagine all'interno del cerchio centrale
+        const centerImage = wheelCenter.querySelector('img');
+
+        // Imposta l'URL dell'immagine del cerchio centrale
+        centerImage.src = "https://files.catbox.moe/rpqh1b.jpg";
+
+        // Array contenente i nomi dei problemi di SF
+        const SFProblems = [
+            "Flag errata", "Json.exception", "SOQL limit exceeded", "DML exception",
+            "Apex CPU limit exceeded", "Heap limit exceeded", "Script-thrown exception",
+            "Missing required field", "Invalid field value", "Timeout error",
+            "Workflow failure", "Process Builder failure", "Trigger exception",
+            "Email service failure", "API request limit exceeded", "Visualforce error",
+            "Lightning component error", "Integration failure", "Deployment error",
+            "Permission issue", "Sharing rule issue", "Validation rule failure",
+            "Duplicate record", "Data skew", "Governor limit",
+            "Test class failure", "Package installation failure", "Metadata API error",
+            "Chatter error", "Community error", "Mobile SDK error",
+            "Einstein Analytics error", "SF Connect error", "External object error",
+            "Platform event error", "Change Data Capture error", "Custom setting error",
+            "Custom metadata error", "Translation error", "Localization issue",
+            "Record locking issue", "Queueable job failure", "Scheduled job failure",
+            "Batch job failure", "Future method failure", "Callout exception",
+            "Site error", "Service Cloud error", "Marketing Cloud error",
+            "Commerce Cloud error", "Financial Services Cloud error", "Health Cloud error",
+            "Government Cloud error", "Nonprofit Cloud error", "Education Cloud error",
+            "Experience Cloud Error"
+        ];
+
+        // Inizializza il numero di fette della ruota
+        let slices = parseInt(slicesInput.value);
+        // Array per contenere i nomi delle fette
+        let sliceNames = [];
+        // Angolo di rotazione corrente della ruota
+        let rotation = 0;
+        // Velocità di rotazione della ruota
+        let velocity = 0;
+        // Fattore di attrito per rallentare la rotazione
+        let friction = 0.99;
+        // Nome del font da utilizzare per il testo
+        const nomeFont = 'Roboto';
+
+        // Funzione per generare i nomi delle fette
+        function generateSliceNames() {
+            sliceNames = [];
+            // Crea una copia dell'array dei nomi dei problemi di SF
+            let availableProblems = [...SFProblems];
+            // Itera per il numero di fette
+            for (let i = 0; i < slices; i++) {
+                // Se ci sono ancora problemi disponibili
+                if (availableProblems.length > 0) {
+                    // Sceglie un problema casuale dall'array
+                    const randomIndex = Math.floor(Math.random() * availableProblems.length);
+                    sliceNames.push(availableProblems[randomIndex]);
+                    // Rimuove il problema scelto dall'array dei disponibili
+                    availableProblems.splice(randomIndex, 1);
+                } else {
+                    // Se non ci sono più problemi disponibili, riutilizza i nomi dall'inizio
+                    sliceNames.push(SFProblems[i % SFProblems.length]);
+                }
+            }
+        }
+
+        // Funzione per disegnare la ruota
+        function drawWheel() {
+            // Pulisce il canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Calcola il centro del canvas
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            // Calcola il raggio della ruota
+            const wheelRadius = Math.min(canvas.width, canvas.height) * 0.45;
+
+            // Itera per ogni fetta della ruota
+            for (let i = 0; i < slices; i++) {
+                // Calcola l'angolo iniziale della fetta
+                const startAngle = (Math.PI * 2 / slices) * i + rotation;
+                // Calcola l'angolo finale della fetta
+                const endAngle = (Math.PI * 2 / slices) * (i + 1) + rotation;
+                // Calcola l'angolo del testo (metà della fetta)
+                const textAngle = (startAngle + endAngle) / 2;
+
+                // Inizia un nuovo tracciato
+                ctx.beginPath();
+                // Si sposta al centro della ruota
+                ctx.moveTo(centerX, centerY);
+                // Disegna un arco per la fetta
+                ctx.arc(centerX, centerY, wheelRadius, startAngle, endAngle);
+                // Crea un gradiente per il colore della fetta
+                const gradient = ctx.createLinearGradient(
+                    centerX + Math.cos(textAngle) * wheelRadius * 0.5,
+                    centerY + Math.sin(textAngle) * wheelRadius * 0.5,
+                    centerX + Math.cos(textAngle) * wheelRadius * 0.8,
+                    centerY + Math.sin(textAngle) * wheelRadius * 0.8
+                );
+                gradient.addColorStop(0, `hsl(${i * 360 / slices}, 100%, 70%)`);
+                gradient.addColorStop(1, `hsl(${i * 360 / slices}, 100%, 60%)`);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Calcola la posizione del testo
+                const x = centerX + Math.cos(textAngle) * wheelRadius * 0.75;
+                const y = centerY + Math.sin(textAngle) * wheelRadius * 0.75;
+
+                // Salva lo stato corrente del contesto
+                ctx.save();
+                // Trasla il contesto alla posizione del testo
+                ctx.translate(x, y);
+                // Ruota il contesto per allineare il testo con la fetta
+                ctx.rotate(textAngle + Math.PI / 2 - Math.PI / 2);
+
+                // Modifica: Riduzione della dimensione del font
+                const fontSize = Math.min(canvas.width, canvas.height) * 0.025;
+                // Imposta lo stile del testo
+                ctx.fillStyle = '#222';
+                ctx.font = `bold ${fontSize}px "${nomeFont}", sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#fff';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+                // Disegna il testo
+                ctx.fillText(sliceNames[i], 0, 2);
+                // Ripristina lo stato del contesto
+                ctx.restore();
+            }
+        }
+
+        // Funzione per aggiornare la ruota (animazione)
+        function updateWheel() {
+            // Rallenta la velocità di rotazione
+            velocity *= friction;
+            // Aggiorna l'angolo di rotazione
+            rotation += velocity;
+            // Disegna la ruota
+            drawWheel();
+            // Se la velocità è ancora significativa, continua l'animazione
+            if (Math.abs(velocity) > 0.001) {
+                requestAnimationFrame(updateWheel);
+            }
+        }
+
+        // Funzione per avviare la rotazione della ruota
+        function spinWheel() {
+            // Imposta una velocità di rotazione casuale
+            velocity = Math.random() * 0.2 + 0.1;
+            // Avvia l'animazione
+            updateWheel();
+        }
+
+        // Funzione per avviare la rotazione della ruota velocemente
+        function spinWheelFast() {
+            // Imposta una velocità di rotazione molto più alta
+            velocity = Math.random() * 0.5 + 0.3;
+            // Avvia l'animazione
+            updateWheel();
+        }
+
+        // Aggiunge un listener per l'evento 'change' sull'input del numero di fette
+        slicesInput.addEventListener('change', () => {
+            // Aggiorna il numero di fette
+            slices = parseInt(slicesInput.value);
+            // Rigenera i nomi delle fette
+            generateSliceNames();
+            // Disegna la ruota
+            drawWheel();
+        });
+
+        // Aggiunge un listener per l'evento 'click' sul bottone "Gira la ruota!"
+        spinButton.addEventListener('click', spinWheel);
+        spinFastButton.addEventListener('click', spinWheelFast); // Aggiunge il listener per il nuovo bottone
+
+        // Aggiunge un listener per l'evento 'click' sul bottone "Rigenera nomi"
+        regenerateButton.addEventListener('click', () => {
+            // Rigenera i nomi delle fette
+            generateSliceNames();
+            // Disegna la ruota
+            drawWheel();
+        });
+
+        // Genera i nomi delle fette all'avvio
+        generateSliceNames();
+        // Disegna la ruota all'avvio
+        drawWheel();
+    </script>
+</body>
+</html>
