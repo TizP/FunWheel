@@ -39,10 +39,10 @@
         .container {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: stretch;
             flex-wrap: nowrap;
-            max-width: 1200px;
             width: 100%;
+            height: 100%;
         }
         /* Stile per il contenitore della ruota */
         .wheel-container {
@@ -51,16 +51,16 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             background-color: #ffffff;
             padding: 15px;
-            width: 90vw;
-            height: 90vw;
-            max-width: 600px;
-            max-height: 600px;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             margin-right: 0;
             margin-left: 0;
+            flex-grow: 1;
+            aspect-ratio: 1 / 1; /* Mantiene il contenitore quadrato */
         }
         /* Stile per l'elemento canvas della ruota */
         #wheel {
@@ -96,10 +96,11 @@
         .controls {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center; /* Centra orizzontalmente i controlli */
+            justify-content: center; /* Centra verticalmente i controlli */
             margin-top: 20px;
             width: 100%;
-            padding-left: 20px;
+            padding-left: 0; /* Rimuove il padding sinistro */
             box-sizing: border-box;
         }
         /* Stile per le etichette dei controlli */
@@ -108,6 +109,8 @@
             color: #555;
             font-weight: bold;
             font-size: 1.2em;
+            text-align: center; /* Centra il testo delle label */
+            width: 100%; /* Assicura che le label occupino la larghezza completa del contenitore */
         }
         /* Stile per gli input di tipo numero */
         .controls input[type="number"] {
@@ -120,6 +123,8 @@
             box-sizing: border-box;
             font-size: 18px;
             transition: border-color 0.3s ease;
+            margin-left: auto; /* Centra orizzontalmente gli input */
+            margin-right: auto;
         }
         /* Stile per gli input di tipo numero quando sono in focus (selezionati) */
         .controls input[type="number"]:focus {
@@ -140,6 +145,8 @@
             box-shadow: 0 3px 7px rgba(0,0,0,0.25);
             width: 90%;
             max-width: 400px;
+            margin-left: auto; /* Centra orizzontalmente i bottoni */
+            margin-right: auto;
         }
         /* Stile per i bottoni quando sonoHover */
         .controls button:hover {
@@ -183,14 +190,23 @@
             .wheel-container {
                 margin-right: 0;
                 margin-bottom: 20px;
+                width: 90vw;
+                height: 90vw;
             }
             .controls {
                 padding-left: 0;
-                align-items: center;
+                align-items: center; /* Mantiene i controlli centrati anche su schermi piccoli */
             }
             .controls button{
                 width: 100%;
                 max-width: 300px;
+            }
+            .controls label {
+                text-align: center; /* Centra il testo delle label su schermi piccoli */
+            }
+            .controls input[type="number"] {
+                margin-left: auto;
+                margin-right: auto;
             }
         }
     </style>
@@ -209,7 +225,7 @@
             <div class="controls">
                 <label for="slices">Numero di fette:</label>
                 <input type="number" id="slices" value="8" min="2">
-                <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                     <button id="spin">Gira la ruota!</button>
                     <button id="spin-fast">Gira la ruota VELOCISSIMO!</button>
                 </div>
@@ -239,12 +255,12 @@
 
         // Array contenente i nomi dei problemi di SF
         const SFProblems = [ "INVALID_FIELD", "DUPLICATE_VALUE", "REQUIRED_FIELD_MISSING", "FIELD_INTEGRITY_EXCEPTION", "MALFORMED_ID", "QUERY_TIMEOUT",
-                               "SOQL_ENGINE_RUNTIME_EXCEPTION", "DMLException", "LIMIT_EXCEEDED", "CPU_TIME_LIMIT_EXCEEDED", "HEAP_SIZE_LIMIT_EXCEEDED", 
-                               "NUMBER_OF_QUERIES_EXCEEDED", "NUMBER_OF_RECORDS_MODIFIED_EXCEEDED", "TRANSACTION_TOO_LARGE", "UNABLE_TO_LOCK_ROW", "INVALID_TYPE",
-                               "TYPE_MISMATCH", "JSON_PARSER_ERROR", "XML_PARSER_ERROR", "APEX_ERROR", "VISUALFORCE_ERROR", "LIGHTNING_ERROR", "INSUFFICIENT_ACCESS_OR_READONLY", "OPERATION_LOCKED", 
-                               "INVALID_SESSION_ID", "AUTHENTICATION_FAILURE", "MISSING_ARGUMENT", "INVALID_ARGUMENT", "UNSUPPORTED_OPERATION", "EXTERNAL_ID_NOT_FOUND", "INVALID_EMAIL_ADDRESS",
-                               "INVALID_PHONE_NUMBER", "INVALID_URL", "INVALID_DATE_FORMAT", "INVALID_CURRENCY_ISO", "PLATFORM_EVENT_PUBLISH_FAILED", "CHANGE_DATA_CAPTURE_ERROR", "CUSTOM_SETTING_LIMIT_EXCEEDED",
-                               "CUSTOM_METADATA_LIMIT_EXCEEDED", "SSO_SERVICE_DOWN", "MALFORMED_QUERY", "INVALID_ID_FIELD", "NON_SELECTIVE_QUERY" ];
+                                "SOQL_ENGINE_RUNTIME_EXCEPTION", "DMLException", "LIMIT_EXCEEDED", "CPU_TIME_LIMIT_EXCEEDED", "HEAP_SIZE_LIMIT_EXCEEDED", 
+                                "NUMBER_OF_QUERIES_EXCEEDED", "NUMBER_OF_RECORDS_MODIFIED_EXCEEDED", "TRANSACTION_TOO_LARGE", "UNABLE_TO_LOCK_ROW", "INVALID_TYPE",
+                                "TYPE_MISMATCH", "JSON_PARSER_ERROR", "XML_PARSER_ERROR", "APEX_ERROR", "VISUALFORCE_ERROR", "LIGHTNING_ERROR", "INSUFFICIENT_ACCESS_OR_READONLY", "OPERATION_LOCKED", 
+                                "INVALID_SESSION_ID", "AUTHENTICATION_FAILURE", "MISSING_ARGUMENT", "INVALID_ARGUMENT", "UNSUPPORTED_OPERATION", "EXTERNAL_ID_NOT_FOUND", "INVALID_EMAIL_ADDRESS",
+                                "INVALID_PHONE_NUMBER", "INVALID_URL", "INVALID_DATE_FORMAT", "INVALID_CURRENCY_ISO", "PLATFORM_EVENT_PUBLISH_FAILED", "CHANGE_DATA_CAPTURE_ERROR", "CUSTOM_SETTING_LIMIT_EXCEEDED",
+                                "CUSTOM_METADATA_LIMIT_EXCEEDED", "SSO_SERVICE_DOWN", "MALFORMED_QUERY", "INVALID_ID_FIELD", "NON_SELECTIVE_QUERY" ];
 
         // Inizializza il numero di fette della ruota
         let slices = parseInt(slicesInput.value);
@@ -405,6 +421,36 @@
         generateSliceNames();
         // Disegna la ruota all'avvio
         drawWheel();
+
+        // Funzione per ridimensionare dinamicamente la ruota
+        function resizeWheel() {
+            const containerElement = document.querySelector('.wheel-container');
+            const mainContainer = document.querySelector('.main-container');
+            const titleElement = document.querySelector('h1');
+            const containerWidth = mainContainer.clientWidth;
+            const windowHeight = window.innerHeight;
+            const titleHeight = titleElement.offsetHeight;
+            const safetyOffsetPercent = 0.05; // Offset di sicurezza come percentuale dell'altezza della finestra
+
+            // Calcola l'offset di sicurezza in pixel
+            const safetyOffset = windowHeight * safetyOffsetPercent;
+
+            // Calcola l'altezza massima disponibile per il contenitore della ruota
+            const maxWheelHeight = windowHeight - titleHeight - 40 - safetyOffset; // 40px di margine + offset
+
+            // Usa Math.min per ottenere la dimensione più piccola tra la larghezza del contenitore e l'altezza massima
+            const size = Math.min(containerWidth, maxWheelHeight);
+
+            canvas.width = size;
+            canvas.height = size;
+            containerElement.style.width = `${size}px`; // Imposta larghezza e altezza del contenitore
+            containerElement.style.height = `${size}px`;
+            drawWheel();
+        }
+
+        // Chiama la funzione di ridimensionamento all'inizio e quando la finestra cambia dimensione
+        resizeWheel();
+        window.addEventListener('resize', resizeWheel);
     </script>
 </body>
 </html>
