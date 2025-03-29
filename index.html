@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La ruota di SF</title>
+    <title>La ruota di Salesforce</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Stile per il corpo della pagina */
@@ -212,7 +212,7 @@
     </style>
 </head>
 <body>
-    <h1>La ruota di SF</h1>
+    <h1>La ruota di Salesforce</h1>
     <div class="main-container">
         <div class="container">
             <div class="wheel-container">
@@ -224,7 +224,9 @@
             </div>
             <div class="controls">
                 <label for="slices">Numero di fette:</label>
-                <input type="number" id="slices" value="8" min="2">
+                <input type="number" id="slices" value="12" min="2" max="50">
+                <label for="font-size">Dimensione del testo:</label>
+                <input type="number" id="font-size" value="15" min="10">
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                     <button id="spin">Gira la ruota!</button>
                     <button id="spin-fast">Gira la ruota VELOCISSIMO!</button>
@@ -240,6 +242,8 @@
         const ctx = canvas.getContext('2d');
         // Ottiene il riferimento all'input per il numero di fette
         const slicesInput = document.getElementById('slices');
+        // Ottiene il riferimento all'input per la dimensione del font
+        const fontSizeInput = document.getElementById('font-size');
         // Ottiene il riferimento al bottone per far girare la ruota
         const spinButton = document.getElementById('spin');
         const spinFastButton = document.getElementById('spin-fast'); // Nuovo bottone per la rotazione veloce
@@ -253,7 +257,7 @@
         // Imposta l'URL dell'immagine del cerchio centrale
         centerImage.src = "https://files.catbox.moe/rpqh1b.jpg";
 
-        // Array contenente i nomi dei problemi di SF
+        // Array contenente i nomi dei problemi di Salesforce
         const SFProblems = [ "INVALID_FIELD", "DUPLICATE_VALUE", "REQUIRED_FIELD_MISSING", "FIELD_INTEGRITY_EXCEPTION", "MALFORMED_ID", "QUERY_TIMEOUT",
                                 "SOQL_ENGINE_RUNTIME_EXCEPTION", "DMLException", "LIMIT_EXCEEDED", "CPU_TIME_LIMIT_EXCEEDED", "HEAP_SIZE_LIMIT_EXCEEDED", 
                                 "NUMBER_OF_QUERIES_EXCEEDED", "NUMBER_OF_RECORDS_MODIFIED_EXCEEDED", "TRANSACTION_TOO_LARGE", "UNABLE_TO_LOCK_ROW", "INVALID_TYPE",
@@ -264,6 +268,8 @@
 
         // Inizializza il numero di fette della ruota
         let slices = parseInt(slicesInput.value);
+        // Inizializza la dimensione del font
+        let fontSize = parseInt(fontSizeInput.value);
         // Array per contenere i nomi delle fette
         let sliceNames = [];
         // Angolo di rotazione corrente della ruota
@@ -274,11 +280,13 @@
         let friction = 0.99;
         // Nome del font da utilizzare per il testo
         const nomeFont = 'Roboto';
+        // Definisce la percentuale di spostamento del testo verso l'interno
+        const textRadiusPercentage = 0.65; // Regola questo valore per spostare il testo
 
         // Funzione per generare i nomi delle fette
         function generateSliceNames() {
             sliceNames = [];
-            // Crea una copia dell'array dei nomi dei problemi di SF
+            // Crea una copia dell'array dei nomi dei problemi di Salesforce
             let availableProblems = [...SFProblems];
             // Itera per il numero di fette
             for (let i = 0; i < slices; i++) {
@@ -336,9 +344,9 @@
                 ctx.lineWidth = 1;
                 ctx.stroke();
 
-                // Calcola la posizione del testo
-                const x = centerX + Math.cos(textAngle) * wheelRadius * 0.75;
-                const y = centerY + Math.sin(textAngle) * wheelRadius * 0.75;
+                // Calcola la posizione del testo, spostandolo verso l'interno
+                const x = centerX + Math.cos(textAngle) * wheelRadius * textRadiusPercentage;
+                const y = centerY + Math.sin(textAngle) * wheelRadius * textRadiusPercentage;
 
                 // Salva lo stato corrente del contesto
                 ctx.save();
@@ -347,8 +355,6 @@
                 // Ruota il contesto per allineare il testo con la fetta
                 ctx.rotate(textAngle + Math.PI / 2 - Math.PI / 2);
 
-                // Modifica: Riduzione della dimensione del font
-                const fontSize = Math.min(canvas.width, canvas.height) * 0.025;
                 // Imposta lo stile del testo
                 ctx.fillStyle = '#222';
                 ctx.font = `bold ${fontSize}px "${nomeFont}", sans-serif`;
@@ -401,6 +407,13 @@
             slices = parseInt(slicesInput.value);
             // Rigenera i nomi delle fette
             generateSliceNames();
+            // Disegna la ruota
+        });
+
+        // Aggiunge un listener per l'evento 'change' sull'input della dimensione del font
+        fontSizeInput.addEventListener('change', () => {
+            // Aggiorna la dimensione del font
+            fontSize = parseInt(fontSizeInput.value);
             // Disegna la ruota
             drawWheel();
         });
